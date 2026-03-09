@@ -4,7 +4,7 @@ from flask import (
     Flask, render_template, request, redirect, url_for,
     flash, session, jsonify
 )
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 import config
 import models
 
@@ -23,6 +23,20 @@ def login_required(view):
         if 'user_id' not in session:
             flash('Vui lòng đăng nhập để tiếp tục.', 'warning')
             return redirect(url_for('login'))
+        return view(**kwargs)
+    return wrapped
+
+
+def admin_required(view):
+    """Decorator: redirect if not admin."""
+    @functools.wraps(view)
+    def wrapped(**kwargs):
+        if 'user_id' not in session:
+            flash('Vui lòng đăng nhập để tiếp tục.', 'warning')
+            return redirect(url_for('login'))
+        if session.get('role') != 'admin':
+            flash('Bạn không có quyền truy cập trang này.', 'danger')
+            return redirect(url_for('index'))
         return view(**kwargs)
     return wrapped
 
@@ -88,6 +102,10 @@ def course_detail(course_code):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if session.get('user_id'):
+        if session.get('role') == 'admin':
+            return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('index'))
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '')
@@ -95,10 +113,47 @@ def login():
         if user and check_password_hash(user['password_hash'], password):
             session['user_id'] = user['id']
             session['username'] = user['username']
+            session['role'] = user['role']
             flash('Đăng nhập thành công!', 'success')
-            return redirect(url_for('admin_dashboard'))
+            if user['role'] == 'admin':
+                return redirect(url_for('admin_dashboard'))
+            return redirect(url_for('index'))
         flash('Tên đăng nhập hoặc mật khẩu không đúng.', 'danger')
     return render_template('login.html')
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if session.get('user_id'):
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        username = request.form.get('username', '').strip()
+        password = request.form.get('password', '')
+        confirm = request.form.get('confirm_password', '')
+        if not username or not password:
+            flash('Vui lòng nhập đầy đủ thông tin.', 'danger')
+        elif len(username) < 3:
+            flash('Tên đăng nhập phải có ít nhất 3 ký tự.', 'danger')
+        elif len(password) < 6:
+            flash('Mật khẩu phải có ít nhất 6 ký tự.', 'danger')
+        elif password != confirm:
+            flash('Mật khẩu xác nhận không khớp.', 'danger')
+        else:
+            existing = models.get_user_by_username(username)
+            if existing:
+                flash('Tên đăng nhập đã tồn tại.', 'danger')
+            else:
+                pw_hash = generate_password_hash(password)
+                user_id = models.create_user(username, pw_hash, 'user')
+                if user_id:
+                    session['user_id'] = user_id
+                    session['username'] = username
+                    session['role'] = 'user'
+                    flash('Đăng ký thành công! Chào mừng bạn.', 'success')
+                    return redirect(url_for('index'))
+                else:
+                    flash('Đã xảy ra lỗi. Vui lòng thử lại.', 'danger')
+    return render_template('register.html')
 
 
 @app.route('/logout')
@@ -113,7 +168,7 @@ def logout():
 # ============================================
 
 @app.route('/admin/')
-@login_required
+@admin_required
 def admin_dashboard():
     q = request.args.get('q', '').strip()
     if q:
@@ -128,7 +183,7 @@ def admin_dashboard():
 # ============================================
 
 @app.route('/admin/syllabus/new', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_syllabus_new():
     if request.method == 'POST':
         data = _extract_syllabus_form(request.form)
@@ -146,7 +201,7 @@ def admin_syllabus_new():
 
 
 @app.route('/admin/syllabus/<int:syllabus_id>/edit', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_syllabus_edit(syllabus_id):
     syllabus = models.get_syllabus_by_id(syllabus_id)
     if not syllabus:
@@ -168,7 +223,7 @@ def admin_syllabus_edit(syllabus_id):
 
 
 @app.route('/admin/syllabus/<int:syllabus_id>/delete', methods=['POST'])
-@login_required
+@admin_required
 def admin_syllabus_delete(syllabus_id):
     models.delete_syllabus(syllabus_id)
     flash('Đã xóa đề cương.', 'success')
@@ -206,7 +261,7 @@ def _extract_syllabus_form(form):
 # ============================================
 
 @app.route('/admin/syllabus/<int:syllabus_id>/instructors', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_instructors(syllabus_id):
     syllabus = models.get_syllabus_by_id(syllabus_id)
     if not syllabus:
@@ -244,7 +299,7 @@ def admin_instructors(syllabus_id):
 
 
 @app.route('/admin/syllabus/<int:syllabus_id>/books', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_books(syllabus_id):
     syllabus = models.get_syllabus_by_id(syllabus_id)
     if not syllabus:
@@ -288,7 +343,7 @@ def admin_books(syllabus_id):
 
 
 @app.route('/admin/syllabus/<int:syllabus_id>/software', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_software(syllabus_id):
     syllabus = models.get_syllabus_by_id(syllabus_id)
     if not syllabus:
@@ -328,7 +383,7 @@ def admin_software(syllabus_id):
 
 
 @app.route('/admin/syllabus/<int:syllabus_id>/goals', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_goals(syllabus_id):
     syllabus = models.get_syllabus_by_id(syllabus_id)
     if not syllabus:
@@ -368,7 +423,7 @@ def admin_goals(syllabus_id):
 
 
 @app.route('/admin/syllabus/<int:syllabus_id>/outcomes', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_outcomes(syllabus_id):
     syllabus = models.get_syllabus_by_id(syllabus_id)
     if not syllabus:
@@ -410,7 +465,7 @@ def admin_outcomes(syllabus_id):
 
 
 @app.route('/admin/syllabus/<int:syllabus_id>/assessments', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_assessments(syllabus_id):
     syllabus = models.get_syllabus_by_id(syllabus_id)
     if not syllabus:
@@ -456,7 +511,7 @@ def admin_assessments(syllabus_id):
 
 
 @app.route('/admin/syllabus/<int:syllabus_id>/teaching-plan', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_teaching_plan(syllabus_id):
     syllabus = models.get_syllabus_by_id(syllabus_id)
     if not syllabus:

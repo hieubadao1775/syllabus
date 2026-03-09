@@ -4,7 +4,11 @@
 {% block content %}
 <section class="section login-section">
     <div class="login-box">
-        <h2>Đăng nhập Admin</h2>
+        <div class="auth-tabs">
+            <a href="{{ url_for('login') }}" class="auth-tab active">Đăng nhập</a>
+            <a href="{{ url_for('register') }}" class="auth-tab">Đăng ký</a>
+        </div>
+        <h2>Đăng nhập</h2>
         <form method="post">
             <div class="form-group">
                 <label for="username">Tên đăng nhập</label>
@@ -16,6 +20,7 @@
             </div>
             <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
         </form>
+        <p class="auth-link">Chưa có tài khoản? <a href="{{ url_for('register') }}">Đăng ký ngay</a></p>
     </div>
 </section>
 {% endblock %}

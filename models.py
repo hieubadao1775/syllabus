@@ -137,6 +137,30 @@ def get_user_by_username(username):
     return row
 
 
+def get_user_by_id(user_id):
+    db = get_db()
+    row = db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    db.close()
+    return row
+
+
+def create_user(username, password_hash, role='user'):
+    """Create a new user. Returns the new user id or None if username exists."""
+    db = get_db()
+    try:
+        cursor = db.execute(
+            "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+            (username, password_hash, role)
+        )
+        db.commit()
+        user_id = cursor.lastrowid
+    except Exception:
+        user_id = None
+    finally:
+        db.close()
+    return user_id
+
+
 # ============================================
 # GENERIC SUB-TABLE CRUD
 # ============================================

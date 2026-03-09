@@ -19,10 +19,14 @@
             </form>
             <div class="nav-links">
                 {% if session.get('user_id') %}
-                    <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+                    <span class="nav-user">👤 {{ session.get('username') }}</span>
+                    {% if session.get('role') == 'admin' %}
+                        <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+                    {% endif %}
                     <a href="{{ url_for('logout') }}">Đăng xuất</a>
                 {% else %}
                     <a href="{{ url_for('login') }}">Đăng nhập</a>
+                    <a href="{{ url_for('register') }}">Đăng ký</a>
                 {% endif %}
             </div>
         </div>
