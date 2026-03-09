@@ -2,25 +2,35 @@
 {% block title %}Đăng nhập{% endblock %}
 
 {% block content %}
-<section class="section login-section">
+<section class="login-section">
     <div class="login-box">
-        <div class="auth-tabs">
-            <a href="{{ url_for('login') }}" class="auth-tab active">Đăng nhập</a>
-            <a href="{{ url_for('register') }}" class="auth-tab">Đăng ký</a>
+        <div class="login-box-header">
+            <div class="login-logo">📚</div>
+            <h2>NEU Syllabus</h2>
+            <p>Đại học Kinh tế Quốc dân</p>
         </div>
-        <h2>Đăng nhập</h2>
-        <form method="post">
-            <div class="form-group">
-                <label for="username">Tên đăng nhập</label>
-                <input type="text" id="username" name="username" required autofocus>
+        <div class="login-box-body">
+            <div class="auth-tabs">
+                <a href="{{ url_for('login') }}" class="auth-tab active">Đăng nhập</a>
+                <a href="{{ url_for('register') }}" class="auth-tab">Đăng ký</a>
             </div>
-            <div class="form-group">
-                <label for="password">Mật khẩu</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Đăng nhập</button>
-        </form>
-        <p class="auth-link">Chưa có tài khoản? <a href="{{ url_for('register') }}">Đăng ký ngay</a></p>
+            <form method="post">
+                <div class="auth-input-group">
+                    <label for="username">Tên đăng nhập</label>
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="username" name="username" required autofocus
+                           placeholder="Nhập tên đăng nhập">
+                </div>
+                <div class="auth-input-group">
+                    <label for="password">Mật khẩu</label>
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="password" name="password" required
+                           placeholder="Nhập mật khẩu">
+                </div>
+                <button type="submit" class="btn-auth">Đăng nhập</button>
+            </form>
+            <div class="auth-divider">Chưa có tài khoản? <a href="{{ url_for('register') }}">Đăng ký ngay</a></div>
+        </div>
     </div>
 </section>
 {% endblock %}
