@@ -29,14 +29,14 @@
                 <button type="button" class="lang-tab" data-lang="en" onclick="switchLang('en')">English</button>
             </div>
 
-            <h3>Thông tin cơ bản</h3>
+            <h3><span class="lang-vi">Thông tin cơ bản</span><span class="lang-en" style="display:none">Basic Information</span></h3>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="course_code">Mã học phần *</label>
+                    <label for="course_code"><span class="lang-vi">Mã học phần *</span><span class="lang-en" style="display:none">Course Code *</span></label>
                     <input type="text" id="course_code" name="course_code" value="{{ d['course_code'] if d else '' }}" required>
                 </div>
                 <div class="form-group">
-                    <label for="training_program">Chương trình đào tạo</label>
+                    <label for="training_program"><span class="lang-vi">Chương trình đào tạo</span><span class="lang-en" style="display:none">Training Program</span></label>
                     <input type="text" id="training_program" name="training_program" value="{{ d['training_program'] if d else '' }}">
                 </div>
             </div>
@@ -54,39 +54,39 @@
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="credits">Số tín chỉ</label>
+                    <label for="credits"><span class="lang-vi">Số tín chỉ</span><span class="lang-en" style="display:none">Credits</span></label>
                     <input type="number" id="credits" name="credits" value="{{ d['credits'] if d else 0 }}" min="0">
                 </div>
                 <div class="form-group">
-                    <label for="contact_hours">Số tiết trên lớp</label>
+                    <label for="contact_hours"><span class="lang-vi">Số tiết trên lớp</span><span class="lang-en" style="display:none">Contact Hours</span></label>
                     <input type="number" id="contact_hours" name="contact_hours" value="{{ d['contact_hours'] if d else 0 }}" min="0">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
-                    <label for="self_study_hours">Số tiết tự học</label>
+                    <label for="self_study_hours"><span class="lang-vi">Số tiết tự học</span><span class="lang-en" style="display:none">Self-study Hours</span></label>
                     <input type="number" id="self_study_hours" name="self_study_hours" value="{{ d['self_study_hours'] if d else 0 }}" min="0">
                 </div>
                 <div class="form-group">
-                    <label for="num_prerequisite_courses">Số HP tiên quyết</label>
+                    <label for="num_prerequisite_courses"><span class="lang-vi">Số HP tiên quyết</span><span class="lang-en" style="display:none">No. of Prerequisites</span></label>
                     <input type="text" id="num_prerequisite_courses" name="num_prerequisite_courses" value="{{ d['num_prerequisite_courses'] if d else 'None' }}">
                 </div>
             </div>
 
-            <h3>Thông tin quyết định</h3>
+            <h3><span class="lang-vi">Thông tin quyết định</span><span class="lang-en" style="display:none">Decision Information</span></h3>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="decision_date">Ngày ra quyết định</label>
+                    <label for="decision_date"><span class="lang-vi">Ngày ra quyết định</span><span class="lang-en" style="display:none">Decision Date</span></label>
                     <input type="date" id="decision_date" name="decision_date" value="{{ d['decision_date'] if d else '' }}">
                 </div>
                 <div class="form-group">
-                    <label for="decision_number">Số quyết định</label>
+                    <label for="decision_number"><span class="lang-vi">Số quyết định</span><span class="lang-en" style="display:none">Decision Number</span></label>
                     <input type="text" id="decision_number" name="decision_number" value="{{ d['decision_number'] if d else '' }}">
                 </div>
             </div>
 
-            <h3>Học phần tiên quyết</h3>
+            <h3><span class="lang-vi">Học phần tiên quyết</span><span class="lang-en" style="display:none">Prerequisite Courses</span></h3>
             <div class="form-group lang-vi">
                 <label for="prerequisite_courses_vi">HP tiên quyết (Tiếng Việt)</label>
                 <input type="text" id="prerequisite_courses_vi" name="prerequisite_courses_vi" value="{{ d['prerequisite_courses_vi'] if d else '' }}">
@@ -135,15 +135,21 @@
                 <textarea id="course_requirements_en" name="course_requirements_en" rows="3">{{ d['course_requirements_en'] if d else '' }}</textarea>
             </div>
 
-            <h3>Thời gian điều chỉnh đề cương</h3>
+            <h3><span class="lang-vi">Thời gian điều chỉnh đề cương</span><span class="lang-en" style="display:none">Syllabus Adjustment Time</span></h3>
             <div class="form-group">
-                <label for="adjustment_time">Syllabus Adjustment Time</label>
+                <label for="adjustment_time"><span class="lang-vi">Thời gian điều chỉnh</span><span class="lang-en" style="display:none">Adjustment Time</span></label>
                 <input type="text" id="adjustment_time" name="adjustment_time" value="{{ d['adjustment_time'] if d else '' }}">
             </div>
 
             <div style="display:flex; gap:0.5rem; margin-top:1.5rem;">
-                <button type="submit" class="btn btn-primary">💾 {{ 'Cập nhật' if syllabus else 'Tạo đề cương' }}</button>
-                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Quay lại</a>
+                <button type="submit" class="btn btn-primary">
+                    <span class="lang-vi">💾 {{ 'Cập nhật' if syllabus else 'Tạo đề cương' }}</span>
+                    <span class="lang-en" style="display:none">💾 {{ 'Update' if syllabus else 'Create Syllabus' }}</span>
+                </button>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">
+                    <span class="lang-vi">← Quay lại</span>
+                    <span class="lang-en" style="display:none">← Back</span>
+                </a>
             </div>
         </form>
     </div>

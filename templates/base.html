@@ -19,9 +19,10 @@
             </form>
             <div class="nav-links">
                 {% if session.get('user_id') %}
-                    <span class="nav-user">👤 {{ session.get('username') }}</span>
                     {% if session.get('role') == 'admin' %}
-                        <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+                        <a href="{{ url_for('admin_dashboard') }}" class="nav-user">👤 {{ session.get('username') }}</a>
+                    {% else %}
+                        <span class="nav-user">👤 {{ session.get('username') }}</span>
                     {% endif %}
                     <a href="{{ url_for('logout') }}">Đăng xuất</a>
                 {% else %}
