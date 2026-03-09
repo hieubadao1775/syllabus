@@ -1,0 +1,187 @@
+{% set page_title = "Kế hoạch giảng dạy (Teaching Plan)" %}
+{% set active_tab = "teaching_plan" %}
+{% extends 'admin/sub_base.html' %}
+
+{% block title %}Admin — Kế hoạch giảng dạy — {{ syllabus['course_code'] }}{% endblock %}
+
+{% block admin_content %}
+<!-- VI Tab -->
+<div class="tab-content active" data-lang="vi">
+    <div class="admin-panel">
+        <h3>Kế hoạch giảng dạy (Tiếng Việt)</h3>
+
+        <form method="post" class="inline-form">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="language" value="VI">
+            <div class="form-group">
+                <label>Tuần</label>
+                <input type="number" name="week" min="1" required style="width:60px">
+            </div>
+            <div class="form-group" style="flex:3">
+                <label>Nội dung chi tiết</label>
+                <input type="text" name="detail" required>
+            </div>
+            <div class="form-group" style="flex:2">
+                <label>Tài liệu</label>
+                <input type="text" name="reference">
+            </div>
+            <div class="form-group" style="flex:2">
+                <label>Hoạt động & Đánh giá</label>
+                <input type="text" name="activities_assessment">
+            </div>
+            <div class="form-group">
+                <label>CLO</label>
+                <input type="text" name="clo" placeholder="CLO1" style="width:120px">
+            </div>
+            <button type="submit" class="btn btn-success btn-sm">+ Thêm</button>
+        </form>
+
+        {% if items_vi %}
+        <table class="data-table">
+            <thead><tr><th>Tuần</th><th>Nội dung chi tiết</th><th>Tài liệu</th><th>Hoạt động & Đánh giá</th><th>CLO</th><th>Thao tác</th></tr></thead>
+            <tbody>
+            {% for item in items_vi %}
+            <tr>
+                <td>{{ item['week'] }}</td>
+                <td>{{ item['detail'] }}</td>
+                <td>{{ item['reference'] }}</td>
+                <td>{{ item['activities_assessment'] }}</td>
+                <td>{{ item['clo'] }}</td>
+                <td class="action-btns">
+                    <button class="btn btn-primary btn-sm" onclick="toggleEditRow({{ item['id'] }})">✏️</button>
+                    <form method="post" style="display:inline" onsubmit="return confirmDelete(this);">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="edit-row-{{ item['id'] }}" style="display:none" class="edit-row">
+                <td colspan="6">
+                    <form method="post" class="inline-form">
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <div class="form-group">
+                            <label>Tuần</label>
+                            <input type="number" name="week" value="{{ item['week'] }}" min="1" required style="width:60px">
+                        </div>
+                        <div class="form-group" style="flex:3">
+                            <label>Nội dung chi tiết</label>
+                            <input type="text" name="detail" value="{{ item['detail'] }}" required>
+                        </div>
+                        <div class="form-group" style="flex:2">
+                            <label>Tài liệu</label>
+                            <input type="text" name="reference" value="{{ item['reference'] }}">
+                        </div>
+                        <div class="form-group" style="flex:2">
+                            <label>Hoạt động & Đánh giá</label>
+                            <input type="text" name="activities_assessment" value="{{ item['activities_assessment'] }}">
+                        </div>
+                        <div class="form-group">
+                            <label>CLO</label>
+                            <input type="text" name="clo" value="{{ item['clo'] }}" style="width:120px">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">💾 Lưu</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditRow({{ item['id'] }})">Hủy</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-note">Chưa có kế hoạch giảng dạy nào.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- EN Tab -->
+<div class="tab-content" data-lang="en">
+    <div class="admin-panel">
+        <h3>Teaching Plan (English)</h3>
+
+        <form method="post" class="inline-form">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="language" value="EN">
+            <div class="form-group">
+                <label>Week</label>
+                <input type="number" name="week" min="1" required style="width:60px">
+            </div>
+            <div class="form-group" style="flex:3">
+                <label>Detail</label>
+                <input type="text" name="detail" required>
+            </div>
+            <div class="form-group" style="flex:2">
+                <label>Reference</label>
+                <input type="text" name="reference">
+            </div>
+            <div class="form-group" style="flex:2">
+                <label>Activities & Assessment</label>
+                <input type="text" name="activities_assessment">
+            </div>
+            <div class="form-group">
+                <label>CLO</label>
+                <input type="text" name="clo" placeholder="CLO1" style="width:120px">
+            </div>
+            <button type="submit" class="btn btn-success btn-sm">+ Add</button>
+        </form>
+
+        {% if items_en %}
+        <table class="data-table">
+            <thead><tr><th>Week</th><th>Detail</th><th>Reference</th><th>Activities & Assessment</th><th>CLO</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for item in items_en %}
+            <tr>
+                <td>{{ item['week'] }}</td>
+                <td>{{ item['detail'] }}</td>
+                <td>{{ item['reference'] }}</td>
+                <td>{{ item['activities_assessment'] }}</td>
+                <td>{{ item['clo'] }}</td>
+                <td class="action-btns">
+                    <button class="btn btn-primary btn-sm" onclick="toggleEditRow({{ item['id'] }})">✏️</button>
+                    <form method="post" style="display:inline" onsubmit="return confirmDelete(this);">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="edit-row-{{ item['id'] }}" style="display:none" class="edit-row">
+                <td colspan="6">
+                    <form method="post" class="inline-form">
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <div class="form-group">
+                            <label>Week</label>
+                            <input type="number" name="week" value="{{ item['week'] }}" min="1" required style="width:60px">
+                        </div>
+                        <div class="form-group" style="flex:3">
+                            <label>Detail</label>
+                            <input type="text" name="detail" value="{{ item['detail'] }}" required>
+                        </div>
+                        <div class="form-group" style="flex:2">
+                            <label>Reference</label>
+                            <input type="text" name="reference" value="{{ item['reference'] }}">
+                        </div>
+                        <div class="form-group" style="flex:2">
+                            <label>Activities & Assessment</label>
+                            <input type="text" name="activities_assessment" value="{{ item['activities_assessment'] }}">
+                        </div>
+                        <div class="form-group">
+                            <label>CLO</label>
+                            <input type="text" name="clo" value="{{ item['clo'] }}" style="width:120px">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">💾 Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditRow({{ item['id'] }})">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-note">No teaching plans added yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

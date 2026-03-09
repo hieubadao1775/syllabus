@@ -1,0 +1,205 @@
+{% set page_title = "Đánh giá (Course Assessment)" %}
+{% set active_tab = "assessments" %}
+{% extends 'admin/sub_base.html' %}
+
+{% block title %}Admin — Đánh giá — {{ syllabus['course_code'] }}{% endblock %}
+
+{% block admin_content %}
+<!-- VI Tab -->
+<div class="tab-content active" data-lang="vi">
+    <div class="admin-panel">
+        <h3>Đánh giá học phần (Tiếng Việt)</h3>
+
+        <form method="post" class="inline-form">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="language" value="VI">
+            <div class="form-group">
+                <label>STT</label>
+                <input type="number" name="order_num" min="1" required style="width:60px">
+            </div>
+            <div class="form-group">
+                <label>Phương pháp</label>
+                <input type="text" name="method" required>
+            </div>
+            <div class="form-group" style="flex:2">
+                <label>Mô tả</label>
+                <input type="text" name="description">
+            </div>
+            <div class="form-group">
+                <label>Thời gian</label>
+                <input type="text" name="time" style="width:100px">
+            </div>
+            <div class="form-group">
+                <label>CLO</label>
+                <input type="text" name="clo" placeholder="CLO1, CLO2" style="width:120px">
+            </div>
+            <div class="form-group">
+                <label>Trọng số</label>
+                <input type="text" name="weight" placeholder="10%" style="width:80px">
+            </div>
+            <button type="submit" class="btn btn-success btn-sm">+ Thêm</button>
+        </form>
+
+        {% if items_vi %}
+        <table class="data-table">
+            <thead><tr><th>STT</th><th>Phương pháp</th><th>Mô tả</th><th>Thời gian</th><th>CLO</th><th>Trọng số</th><th>Thao tác</th></tr></thead>
+            <tbody>
+            {% for item in items_vi %}
+            <tr>
+                <td>{{ item['order_num'] }}</td>
+                <td>{{ item['method'] }}</td>
+                <td>{{ item['description'] }}</td>
+                <td>{{ item['time'] }}</td>
+                <td>{{ item['clo'] }}</td>
+                <td>{{ item['weight'] }}</td>
+                <td class="action-btns">
+                    <button class="btn btn-primary btn-sm" onclick="toggleEditRow({{ item['id'] }})">✏️</button>
+                    <form method="post" style="display:inline" onsubmit="return confirmDelete(this);">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="edit-row-{{ item['id'] }}" style="display:none" class="edit-row">
+                <td colspan="7">
+                    <form method="post" class="inline-form">
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <div class="form-group">
+                            <label>STT</label>
+                            <input type="number" name="order_num" value="{{ item['order_num'] }}" min="1" required style="width:60px">
+                        </div>
+                        <div class="form-group">
+                            <label>Phương pháp</label>
+                            <input type="text" name="method" value="{{ item['method'] }}" required>
+                        </div>
+                        <div class="form-group" style="flex:2">
+                            <label>Mô tả</label>
+                            <input type="text" name="description" value="{{ item['description'] }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Thời gian</label>
+                            <input type="text" name="time" value="{{ item['time'] }}" style="width:100px">
+                        </div>
+                        <div class="form-group">
+                            <label>CLO</label>
+                            <input type="text" name="clo" value="{{ item['clo'] }}" style="width:120px">
+                        </div>
+                        <div class="form-group">
+                            <label>Trọng số</label>
+                            <input type="text" name="weight" value="{{ item['weight'] }}" style="width:80px">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">💾 Lưu</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditRow({{ item['id'] }})">Hủy</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-note">Chưa có phương pháp đánh giá nào.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- EN Tab -->
+<div class="tab-content" data-lang="en">
+    <div class="admin-panel">
+        <h3>Course Assessment (English)</h3>
+
+        <form method="post" class="inline-form">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="language" value="EN">
+            <div class="form-group">
+                <label>#</label>
+                <input type="number" name="order_num" min="1" required style="width:60px">
+            </div>
+            <div class="form-group">
+                <label>Method</label>
+                <input type="text" name="method" required>
+            </div>
+            <div class="form-group" style="flex:2">
+                <label>Description</label>
+                <input type="text" name="description">
+            </div>
+            <div class="form-group">
+                <label>Time</label>
+                <input type="text" name="time" style="width:100px">
+            </div>
+            <div class="form-group">
+                <label>CLO</label>
+                <input type="text" name="clo" placeholder="CLO1, CLO2" style="width:120px">
+            </div>
+            <div class="form-group">
+                <label>Weight</label>
+                <input type="text" name="weight" placeholder="10%" style="width:80px">
+            </div>
+            <button type="submit" class="btn btn-success btn-sm">+ Add</button>
+        </form>
+
+        {% if items_en %}
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Method</th><th>Description</th><th>Time</th><th>CLO</th><th>Weight</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for item in items_en %}
+            <tr>
+                <td>{{ item['order_num'] }}</td>
+                <td>{{ item['method'] }}</td>
+                <td>{{ item['description'] }}</td>
+                <td>{{ item['time'] }}</td>
+                <td>{{ item['clo'] }}</td>
+                <td>{{ item['weight'] }}</td>
+                <td class="action-btns">
+                    <button class="btn btn-primary btn-sm" onclick="toggleEditRow({{ item['id'] }})">✏️</button>
+                    <form method="post" style="display:inline" onsubmit="return confirmDelete(this);">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="edit-row-{{ item['id'] }}" style="display:none" class="edit-row">
+                <td colspan="7">
+                    <form method="post" class="inline-form">
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <div class="form-group">
+                            <label>#</label>
+                            <input type="number" name="order_num" value="{{ item['order_num'] }}" min="1" required style="width:60px">
+                        </div>
+                        <div class="form-group">
+                            <label>Method</label>
+                            <input type="text" name="method" value="{{ item['method'] }}" required>
+                        </div>
+                        <div class="form-group" style="flex:2">
+                            <label>Description</label>
+                            <input type="text" name="description" value="{{ item['description'] }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Time</label>
+                            <input type="text" name="time" value="{{ item['time'] }}" style="width:100px">
+                        </div>
+                        <div class="form-group">
+                            <label>CLO</label>
+                            <input type="text" name="clo" value="{{ item['clo'] }}" style="width:120px">
+                        </div>
+                        <div class="form-group">
+                            <label>Weight</label>
+                            <input type="text" name="weight" value="{{ item['weight'] }}" style="width:80px">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">💾 Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditRow({{ item['id'] }})">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-note">No assessments added yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

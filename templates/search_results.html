@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Kết quả tìm kiếm: {{ query }}{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>Kết quả tìm kiếm: "{{ query }}"</h2>
+    <p>Tìm thấy {{ results|length }} đề cương</p>
+
+    {% if results %}
+    <div class="card-grid">
+        {% for s in results %}
+        <a href="{{ url_for('course_detail', course_code=s['course_code']) }}" class="card">
+            <div class="card-header">
+                <span class="badge">{{ s['training_program'] }}</span>
+                <span class="badge badge-credit">{{ s['credits'] }} TC</span>
+            </div>
+            <h3 class="card-code">{{ s['course_code'] }}</h3>
+            <p class="card-title">{{ s['course_title_vi'] }}</p>
+            <p class="card-title-en">{{ s['course_title_en'] }}</p>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-state">Không tìm thấy đề cương phù hợp. <a href="{{ url_for('index') }}">Quay về trang chủ</a></p>
+    {% endif %}
+</section>
+{% endblock %}

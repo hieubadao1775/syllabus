@@ -1,0 +1,169 @@
+{% set page_title = "Chuẩn đầu ra (Learning Outcomes)" %}
+{% set active_tab = "outcomes" %}
+{% extends 'admin/sub_base.html' %}
+
+{% block title %}Admin — Chuẩn đầu ra — {{ syllabus['course_code'] }}{% endblock %}
+
+{% block admin_content %}
+<!-- VI Tab -->
+<div class="tab-content active" data-lang="vi">
+    <div class="admin-panel">
+        <h3>Chuẩn đầu ra (Tiếng Việt)</h3>
+
+        <form method="post" class="inline-form">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="language" value="VI">
+            <div class="form-group">
+                <label>Goal</label>
+                <input type="text" name="goal" placeholder="G1" required style="width:80px">
+            </div>
+            <div class="form-group">
+                <label>CLO</label>
+                <input type="text" name="clo_code" placeholder="CLO1" required style="width:80px">
+            </div>
+            <div class="form-group" style="flex:3">
+                <label>Mô tả CLO</label>
+                <input type="text" name="clo_description" required>
+            </div>
+            <div class="form-group">
+                <label>Level</label>
+                <input type="text" name="level" placeholder="TU3, ITU3..." style="width:100px">
+            </div>
+            <button type="submit" class="btn btn-success btn-sm">+ Thêm</button>
+        </form>
+
+        {% if items_vi %}
+        <table class="data-table">
+            <thead><tr><th>Goal</th><th>CLO</th><th>Mô tả CLO</th><th>Level</th><th>Thao tác</th></tr></thead>
+            <tbody>
+            {% for item in items_vi %}
+            <tr>
+                <td>{{ item['goal'] }}</td>
+                <td>{{ item['clo_code'] }}</td>
+                <td>{{ item['clo_description'] }}</td>
+                <td>{{ item['level'] }}</td>
+                <td class="action-btns">
+                    <button class="btn btn-primary btn-sm" onclick="toggleEditRow({{ item['id'] }})">✏️</button>
+                    <form method="post" style="display:inline" onsubmit="return confirmDelete(this);">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="edit-row-{{ item['id'] }}" style="display:none" class="edit-row">
+                <td colspan="5">
+                    <form method="post" class="inline-form">
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <div class="form-group">
+                            <label>Goal</label>
+                            <input type="text" name="goal" value="{{ item['goal'] }}" required style="width:80px">
+                        </div>
+                        <div class="form-group">
+                            <label>CLO</label>
+                            <input type="text" name="clo_code" value="{{ item['clo_code'] }}" required style="width:80px">
+                        </div>
+                        <div class="form-group" style="flex:3">
+                            <label>Mô tả CLO</label>
+                            <input type="text" name="clo_description" value="{{ item['clo_description'] }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Level</label>
+                            <input type="text" name="level" value="{{ item['level'] }}" style="width:100px">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">💾 Lưu</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditRow({{ item['id'] }})">Hủy</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-note">Chưa có chuẩn đầu ra nào.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- EN Tab -->
+<div class="tab-content" data-lang="en">
+    <div class="admin-panel">
+        <h3>Learning Outcomes (English)</h3>
+
+        <form method="post" class="inline-form">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="language" value="EN">
+            <div class="form-group">
+                <label>Goal</label>
+                <input type="text" name="goal" placeholder="G1" required style="width:80px">
+            </div>
+            <div class="form-group">
+                <label>CLO</label>
+                <input type="text" name="clo_code" placeholder="CLO1" required style="width:80px">
+            </div>
+            <div class="form-group" style="flex:3">
+                <label>CLO Description</label>
+                <input type="text" name="clo_description" required>
+            </div>
+            <div class="form-group">
+                <label>Level</label>
+                <input type="text" name="level" placeholder="TU3, ITU3..." style="width:100px">
+            </div>
+            <button type="submit" class="btn btn-success btn-sm">+ Add</button>
+        </form>
+
+        {% if items_en %}
+        <table class="data-table">
+            <thead><tr><th>Goal</th><th>CLO</th><th>CLO Description</th><th>Level</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for item in items_en %}
+            <tr>
+                <td>{{ item['goal'] }}</td>
+                <td>{{ item['clo_code'] }}</td>
+                <td>{{ item['clo_description'] }}</td>
+                <td>{{ item['level'] }}</td>
+                <td class="action-btns">
+                    <button class="btn btn-primary btn-sm" onclick="toggleEditRow({{ item['id'] }})">✏️</button>
+                    <form method="post" style="display:inline" onsubmit="return confirmDelete(this);">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑</button>
+                    </form>
+                </td>
+            </tr>
+            <tr id="edit-row-{{ item['id'] }}" style="display:none" class="edit-row">
+                <td colspan="5">
+                    <form method="post" class="inline-form">
+                        <input type="hidden" name="action" value="edit">
+                        <input type="hidden" name="item_id" value="{{ item['id'] }}">
+                        <div class="form-group">
+                            <label>Goal</label>
+                            <input type="text" name="goal" value="{{ item['goal'] }}" required style="width:80px">
+                        </div>
+                        <div class="form-group">
+                            <label>CLO</label>
+                            <input type="text" name="clo_code" value="{{ item['clo_code'] }}" required style="width:80px">
+                        </div>
+                        <div class="form-group" style="flex:3">
+                            <label>CLO Description</label>
+                            <input type="text" name="clo_description" value="{{ item['clo_description'] }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Level</label>
+                            <input type="text" name="level" value="{{ item['level'] }}" style="width:100px">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-sm">💾 Save</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEditRow({{ item['id'] }})">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty-note">No learning outcomes added yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

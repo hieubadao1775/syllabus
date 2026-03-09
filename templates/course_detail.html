@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% block title %}{{ syllabus['course_title_vi'] }} ({{ syllabus['course_code'] }}){% endblock %}
+
+{% block content %}
+<section class="section syllabus-detail">
+    <!-- Language Tabs -->
+    <div class="lang-tabs">
+        <button class="lang-tab active" data-lang="vi" onclick="switchLang('vi')">Tiếng Việt</button>
+        <button class="lang-tab" data-lang="en" onclick="switchLang('en')">English</button>
+    </div>
+
+    <!-- HEADER -->
+    <div class="syllabus-header">
+        <h1>
+            <span class="lang-vi">{{ syllabus['course_title_vi'] }}</span>
+            <span class="lang-en" style="display:none">{{ syllabus['course_title_en'] }}</span>
+            <small>({{ syllabus['course_code'] }})</small>
+        </h1>
+    </div>
+
+    <!-- 1. GENERAL INFO -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">1. Thông tin chung</span>
+            <span class="lang-en" style="display:none">1. General Information</span>
+        </h2>
+        <table class="info-table">
+            <tr>
+                <th><span class="lang-vi">Mã học phần</span><span class="lang-en" style="display:none">Course Code</span></th>
+                <td>{{ syllabus['course_code'] }}</td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">Tên học phần</span><span class="lang-en" style="display:none">Course Title</span></th>
+                <td>
+                    <span class="lang-vi">{{ syllabus['course_title_vi'] }}</span>
+                    <span class="lang-en" style="display:none">{{ syllabus['course_title_en'] }}</span>
+                </td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">Số tín chỉ</span><span class="lang-en" style="display:none">Credits</span></th>
+                <td>{{ syllabus['credits'] }}</td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">Số tiết trên lớp</span><span class="lang-en" style="display:none">Contact Hours</span></th>
+                <td>{{ syllabus['contact_hours'] }}</td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">Số tiết tự học</span><span class="lang-en" style="display:none">Self-study Hours</span></th>
+                <td>{{ syllabus['self_study_hours'] }}</td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">Chương trình đào tạo</span><span class="lang-en" style="display:none">Training Program</span></th>
+                <td>{{ syllabus['training_program'] }}</td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">HP tiên quyết</span><span class="lang-en" style="display:none">Prerequisites</span></th>
+                <td>
+                    <span class="lang-vi">{{ syllabus['prerequisite_courses_vi'] or 'Không' }}</span>
+                    <span class="lang-en" style="display:none">{{ syllabus['prerequisite_courses_en'] or 'None' }}</span>
+                </td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">Số HP tiên quyết</span><span class="lang-en" style="display:none">Number of Prerequisites</span></th>
+                <td>{{ syllabus['num_prerequisite_courses'] }}</td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">Ngày ra quyết định</span><span class="lang-en" style="display:none">Decision Date</span></th>
+                <td>{{ syllabus['decision_date'] }}</td>
+            </tr>
+            <tr>
+                <th><span class="lang-vi">Số quyết định</span><span class="lang-en" style="display:none">Decision Number</span></th>
+                <td>{{ syllabus['decision_number'] }}</td>
+            </tr>
+        </table>
+
+        <!-- Instructors -->
+        <h3>
+            <span class="lang-vi">Giảng viên</span>
+            <span class="lang-en" style="display:none">Instructors</span>
+        </h3>
+        <div class="lang-vi">
+        {% if instructors_vi %}
+        <table class="data-table">
+            <thead><tr><th>STT</th><th>Họ tên</th><th>Email</th></tr></thead>
+            <tbody>
+            {% for i in instructors_vi %}
+            <tr><td>{{ loop.index }}</td><td>{{ i['full_name'] }}</td><td>{{ i['email'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">Chưa có thông tin.</p>{% endif %}
+        </div>
+        <div class="lang-en" style="display:none">
+        {% if instructors_en %}
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Full Name</th><th>Email</th></tr></thead>
+            <tbody>
+            {% for i in instructors_en %}
+            <tr><td>{{ loop.index }}</td><td>{{ i['full_name'] }}</td><td>{{ i['email'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">No information available.</p>{% endif %}
+        </div>
+    </div>
+
+    <!-- 2. COURSE DESCRIPTION (3.1) -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">2. Mô tả khóa học</span>
+            <span class="lang-en" style="display:none">2. Course Description</span>
+        </h2>
+        <div class="lang-vi">
+            <p>{{ syllabus['description_vi'] or 'Chưa có thông tin.' }}</p>
+        </div>
+        <div class="lang-en" style="display:none">
+            <p>{{ syllabus['description_en'] or 'No information available.' }}</p>
+        </div>
+
+        <!-- Books -->
+        <h3>
+            <span class="lang-vi">Tài liệu học tập</span>
+            <span class="lang-en" style="display:none">Learning Materials</span>
+        </h3>
+        <div class="lang-vi">
+        {% set textbooks_vi = books_vi|selectattr('book_type', 'equalto', 'textbook')|list %}
+        {% set refs_vi = books_vi|selectattr('book_type', 'equalto', 'reference')|list %}
+        {% if textbooks_vi %}
+        <h4>Giáo trình</h4>
+        <table class="data-table">
+            <thead><tr><th>STT</th><th>Tên sách</th><th>Tác giả</th><th>Năm</th><th>NXB</th></tr></thead>
+            <tbody>
+            {% for b in textbooks_vi %}
+            <tr><td>{{ loop.index }}</td><td>{{ b['title'] }}</td><td>{{ b['author'] }}</td><td>{{ b['year'] }}</td><td>{{ b['publisher'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% if refs_vi %}
+        <h4>Tài liệu tham khảo</h4>
+        <table class="data-table">
+            <thead><tr><th>STT</th><th>Tên sách</th><th>Tác giả</th><th>Năm</th><th>NXB</th></tr></thead>
+            <tbody>
+            {% for b in refs_vi %}
+            <tr><td>{{ loop.index }}</td><td>{{ b['title'] }}</td><td>{{ b['author'] }}</td><td>{{ b['year'] }}</td><td>{{ b['publisher'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% if not textbooks_vi and not refs_vi %}<p class="empty-note">Chưa có thông tin.</p>{% endif %}
+        </div>
+        <div class="lang-en" style="display:none">
+        {% set textbooks_en = books_en|selectattr('book_type', 'equalto', 'textbook')|list %}
+        {% set refs_en = books_en|selectattr('book_type', 'equalto', 'reference')|list %}
+        {% if textbooks_en %}
+        <h4>Textbooks</h4>
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Title</th><th>Author</th><th>Year</th><th>Publisher</th></tr></thead>
+            <tbody>
+            {% for b in textbooks_en %}
+            <tr><td>{{ loop.index }}</td><td>{{ b['title'] }}</td><td>{{ b['author'] }}</td><td>{{ b['year'] }}</td><td>{{ b['publisher'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% if refs_en %}
+        <h4>References</h4>
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Title</th><th>Author</th><th>Year</th><th>Publisher</th></tr></thead>
+            <tbody>
+            {% for b in refs_en %}
+            <tr><td>{{ loop.index }}</td><td>{{ b['title'] }}</td><td>{{ b['author'] }}</td><td>{{ b['year'] }}</td><td>{{ b['publisher'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        {% if not textbooks_en and not refs_en %}<p class="empty-note">No information available.</p>{% endif %}
+        </div>
+
+        <!-- Software -->
+        <h3>
+            <span class="lang-vi">Phần mềm</span>
+            <span class="lang-en" style="display:none">Software</span>
+        </h3>
+        <div class="lang-vi">
+        {% if software_vi %}
+        <table class="data-table">
+            <thead><tr><th>STT</th><th>Tên phần mềm</th><th>Mô tả</th><th>Phiên bản</th></tr></thead>
+            <tbody>
+            {% for sw in software_vi %}
+            <tr><td>{{ loop.index }}</td><td>{{ sw['software_name'] }}</td><td>{{ sw['description'] }}</td><td>{{ sw['version'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">Chưa có thông tin.</p>{% endif %}
+        </div>
+        <div class="lang-en" style="display:none">
+        {% if software_en %}
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Software</th><th>Description</th><th>Version</th></tr></thead>
+            <tbody>
+            {% for sw in software_en %}
+            <tr><td>{{ loop.index }}</td><td>{{ sw['software_name'] }}</td><td>{{ sw['description'] }}</td><td>{{ sw['version'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">No information available.</p>{% endif %}
+        </div>
+    </div>
+
+    <!-- 5. COURSE GOALS -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">3. Mục tiêu học phần (Course Goals)</span>
+            <span class="lang-en" style="display:none">3. Course Goals</span>
+        </h2>
+        <div class="lang-vi">
+        {% if goals_vi %}
+        <table class="data-table">
+            <thead><tr><th>Goals</th><th>Mô tả</th><th>PLO</th></tr></thead>
+            <tbody>
+            {% for g in goals_vi %}
+            <tr><td>{{ g['goal_code'] }}</td><td>{{ g['description'] }}</td><td>{{ g['plo'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">Chưa có thông tin.</p>{% endif %}
+        </div>
+        <div class="lang-en" style="display:none">
+        {% if goals_en %}
+        <table class="data-table">
+            <thead><tr><th>Goals</th><th>Description</th><th>PLO</th></tr></thead>
+            <tbody>
+            {% for g in goals_en %}
+            <tr><td>{{ g['goal_code'] }}</td><td>{{ g['description'] }}</td><td>{{ g['plo'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">No information available.</p>{% endif %}
+        </div>
+    </div>
+
+    <!-- 6. LEARNING OUTCOMES -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">4. Chuẩn đầu ra (Learning Outcomes)</span>
+            <span class="lang-en" style="display:none">4. Learning Outcomes</span>
+        </h2>
+        <div class="lang-vi">
+        {% if outcomes_vi %}
+        <table class="data-table">
+            <thead><tr><th>Goal</th><th>CLO</th><th>Mô tả CLO</th><th>Level</th></tr></thead>
+            <tbody>
+            {% for o in outcomes_vi %}
+            <tr><td>{{ o['goal'] }}</td><td>{{ o['clo_code'] }}</td><td>{{ o['clo_description'] }}</td><td>{{ o['level'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">Chưa có thông tin.</p>{% endif %}
+        </div>
+        <div class="lang-en" style="display:none">
+        {% if outcomes_en %}
+        <table class="data-table">
+            <thead><tr><th>Goal</th><th>CLO</th><th>CLO Description</th><th>Level</th></tr></thead>
+            <tbody>
+            {% for o in outcomes_en %}
+            <tr><td>{{ o['goal'] }}</td><td>{{ o['clo_code'] }}</td><td>{{ o['clo_description'] }}</td><td>{{ o['level'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">No information available.</p>{% endif %}
+        </div>
+    </div>
+
+    <!-- 7. COURSE ASSESSMENT -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">5. Đánh giá học phần (Course Assessment)</span>
+            <span class="lang-en" style="display:none">5. Course Assessment</span>
+        </h2>
+        <div class="lang-vi">
+        {% if assessments_vi %}
+        <table class="data-table">
+            <thead><tr><th>STT</th><th>Phương pháp</th><th>Mô tả</th><th>Thời gian</th><th>CLO</th><th>Trọng số</th></tr></thead>
+            <tbody>
+            {% for a in assessments_vi %}
+            <tr><td>{{ a['order_num'] }}</td><td>{{ a['method'] }}</td><td>{{ a['description'] }}</td><td>{{ a['time'] }}</td><td>{{ a['clo'] }}</td><td>{{ a['weight'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">Chưa có thông tin.</p>{% endif %}
+        </div>
+        <div class="lang-en" style="display:none">
+        {% if assessments_en %}
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Method</th><th>Description</th><th>Time</th><th>CLO</th><th>Weight</th></tr></thead>
+            <tbody>
+            {% for a in assessments_en %}
+            <tr><td>{{ a['order_num'] }}</td><td>{{ a['method'] }}</td><td>{{ a['description'] }}</td><td>{{ a['time'] }}</td><td>{{ a['clo'] }}</td><td>{{ a['weight'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">No information available.</p>{% endif %}
+        </div>
+    </div>
+
+    <!-- 8. TEACHING PLAN -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">6. Kế hoạch giảng dạy (Teaching Plan)</span>
+            <span class="lang-en" style="display:none">6. Teaching Plan</span>
+        </h2>
+        <div class="lang-vi">
+        {% if plans_vi %}
+        <table class="data-table">
+            <thead><tr><th>Tuần</th><th>Nội dung chi tiết</th><th>Tài liệu</th><th>Hoạt động & Đánh giá</th><th>CLO</th></tr></thead>
+            <tbody>
+            {% for p in plans_vi %}
+            <tr><td>{{ p['week'] }}</td><td>{{ p['detail'] }}</td><td>{{ p['reference'] }}</td><td>{{ p['activities_assessment'] }}</td><td>{{ p['clo'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">Chưa có thông tin.</p>{% endif %}
+        </div>
+        <div class="lang-en" style="display:none">
+        {% if plans_en %}
+        <table class="data-table">
+            <thead><tr><th>Week</th><th>Detail</th><th>Reference</th><th>Activities & Assessment</th><th>CLO</th></tr></thead>
+            <tbody>
+            {% for p in plans_en %}
+            <tr><td>{{ p['week'] }}</td><td>{{ p['detail'] }}</td><td>{{ p['reference'] }}</td><td>{{ p['activities_assessment'] }}</td><td>{{ p['clo'] }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p class="empty-note">No information available.</p>{% endif %}
+        </div>
+    </div>
+
+    <!-- 9. CLO ASSESSMENT -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">7. Đánh giá Chuẩn đầu ra (CLO Assessment)</span>
+            <span class="lang-en" style="display:none">7. Course Learning Outcome Assessment</span>
+        </h2>
+        <div class="lang-vi">
+            <p>{{ syllabus['clo_assessment_vi'] or 'Chưa có thông tin.' }}</p>
+        </div>
+        <div class="lang-en" style="display:none">
+            <p>{{ syllabus['clo_assessment_en'] or 'No information available.' }}</p>
+        </div>
+    </div>
+
+    <!-- 10. COURSE REQUIREMENTS -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">8. Yêu cầu học phần (Course Requirements)</span>
+            <span class="lang-en" style="display:none">8. Course Requirements</span>
+        </h2>
+        <div class="lang-vi">
+            <p>{{ syllabus['course_requirements_vi'] or 'Chưa có thông tin.' }}</p>
+        </div>
+        <div class="lang-en" style="display:none">
+            <p>{{ syllabus['course_requirements_en'] or 'No information available.' }}</p>
+        </div>
+    </div>
+
+    <!-- ADJUSTMENT TIME -->
+    <div class="syllabus-section">
+        <h2>
+            <span class="lang-vi">9. Thời gian điều chỉnh đề cương</span>
+            <span class="lang-en" style="display:none">9. Syllabus Adjustment Time</span>
+        </h2>
+        <p>{{ syllabus['adjustment_time'] or 'Chưa có thông tin.' }}</p>
+    </div>
+
+    {% if session.get('user_id') %}
+    <div class="admin-actions">
+        <a href="{{ url_for('admin_syllabus_edit', syllabus_id=syllabus['id']) }}" class="btn btn-primary">Chỉnh sửa đề cương</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

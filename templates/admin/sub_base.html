@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="section">
+    <h2>{{ page_title }} — {{ syllabus['course_code'] }}</h2>
+
+    <!-- Sub-navigation -->
+    <div class="sub-nav">
+        <a href="{{ url_for('admin_syllabus_edit', syllabus_id=syllabus['id']) }}" {% if active_tab == 'general' %}class="active"{% endif %}>Thông tin chung</a>
+        <a href="{{ url_for('admin_instructors', syllabus_id=syllabus['id']) }}" {% if active_tab == 'instructors' %}class="active"{% endif %}>Giảng viên</a>
+        <a href="{{ url_for('admin_books', syllabus_id=syllabus['id']) }}" {% if active_tab == 'books' %}class="active"{% endif %}>Sách & Tài liệu</a>
+        <a href="{{ url_for('admin_software', syllabus_id=syllabus['id']) }}" {% if active_tab == 'software' %}class="active"{% endif %}>Phần mềm</a>
+        <a href="{{ url_for('admin_goals', syllabus_id=syllabus['id']) }}" {% if active_tab == 'goals' %}class="active"{% endif %}>Mục tiêu (Goals)</a>
+        <a href="{{ url_for('admin_outcomes', syllabus_id=syllabus['id']) }}" {% if active_tab == 'outcomes' %}class="active"{% endif %}>Chuẩn đầu ra (CLO)</a>
+        <a href="{{ url_for('admin_assessments', syllabus_id=syllabus['id']) }}" {% if active_tab == 'assessments' %}class="active"{% endif %}>Đánh giá (Assessment)</a>
+        <a href="{{ url_for('admin_teaching_plan', syllabus_id=syllabus['id']) }}" {% if active_tab == 'teaching_plan' %}class="active"{% endif %}>Kế hoạch giảng dạy</a>
+    </div>
+
+    <!-- Language tabs -->
+    <div class="lang-tabs" style="margin-bottom:1rem;">
+        <button type="button" class="admin-lang-tab active" data-lang="vi" onclick="switchAdminTab('vi')">Tiếng Việt</button>
+        <button type="button" class="admin-lang-tab" data-lang="en" onclick="switchAdminTab('en')">English</button>
+    </div>
+
+    {% block admin_content %}{% endblock %}
+</section>
+{% endblock %}

@@ -1,0 +1,6 @@
+import os
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'neu-syllabus-secret-key-change-in-production')
+DATABASE = os.path.join(BASE_DIR, 'database.db')

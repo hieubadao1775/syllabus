@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Admin — Dashboard{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="admin-header">
+        <h2>Quản lý Đề cương Học phần</h2>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <form action="{{ url_for('admin_dashboard') }}" method="get" style="display:flex; gap:0.5rem;">
+                <input type="text" name="q" placeholder="Tìm kiếm..." value="{{ query }}" style="padding:0.4rem 0.75rem; border:1px solid #d1d5db; border-radius:4px; font-size:0.9rem;">
+                <button type="submit" class="btn btn-secondary btn-sm">Tìm</button>
+            </form>
+            <a href="{{ url_for('admin_syllabus_new') }}" class="btn btn-primary">+ Tạo đề cương mới</a>
+        </div>
+    </div>
+
+    {% if syllabi %}
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Mã HP</th>
+                <th>Tên HP (VI)</th>
+                <th>Tên HP (EN)</th>
+                <th>TC</th>
+                <th>CTĐT</th>
+                <th>Cập nhật</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in syllabi %}
+            <tr>
+                <td><strong>{{ s['course_code'] }}</strong></td>
+                <td>{{ s['course_title_vi'] }}</td>
+                <td>{{ s['course_title_en'] }}</td>
+                <td>{{ s['credits'] }}</td>
+                <td>{{ s['training_program'] }}</td>
+                <td>{{ s['updated_at'][:10] if s['updated_at'] else '' }}</td>
+                <td>
+                    <div class="action-btns">
+                        <a href="{{ url_for('course_detail', course_code=s['course_code']) }}" class="btn btn-secondary btn-sm" title="Xem">👁</a>
+                        <a href="{{ url_for('admin_syllabus_edit', syllabus_id=s['id']) }}" class="btn btn-primary btn-sm" title="Sửa">✏️</a>
+                        <form method="post" action="{{ url_for('admin_syllabus_delete', syllabus_id=s['id']) }}" style="display:inline" onsubmit="return confirmDelete(this);">
+                            <button type="submit" class="btn btn-danger btn-sm" title="Xóa">🗑</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty-state">Không có đề cương nào.{% if query %} Thử tìm kiếm khác. <a href="{{ url_for('admin_dashboard') }}">Xem tất cả</a>{% endif %}</p>
+    {% endif %}
+</section>
+{% endblock %}

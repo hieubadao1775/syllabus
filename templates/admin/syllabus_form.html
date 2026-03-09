@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}Admin — {% if syllabus %}Sửa{% else %}Tạo{% endif %} Đề cương{% endblock %}
+
+{% block content %}
+<section class="section">
+    <h2>{% if syllabus %}Sửa đề cương: {{ syllabus['course_code'] }}{% else %}Tạo đề cương mới{% endif %}</h2>
+
+    {% if syllabus %}
+    <!-- Sub-navigation for editing sections -->
+    <div class="sub-nav">
+        <a href="{{ url_for('admin_syllabus_edit', syllabus_id=syllabus['id']) }}" class="active">Thông tin chung</a>
+        <a href="{{ url_for('admin_instructors', syllabus_id=syllabus['id']) }}">Giảng viên</a>
+        <a href="{{ url_for('admin_books', syllabus_id=syllabus['id']) }}">Sách & Tài liệu</a>
+        <a href="{{ url_for('admin_software', syllabus_id=syllabus['id']) }}">Phần mềm</a>
+        <a href="{{ url_for('admin_goals', syllabus_id=syllabus['id']) }}">Mục tiêu (Goals)</a>
+        <a href="{{ url_for('admin_outcomes', syllabus_id=syllabus['id']) }}">Chuẩn đầu ra (CLO)</a>
+        <a href="{{ url_for('admin_assessments', syllabus_id=syllabus['id']) }}">Đánh giá (Assessment)</a>
+        <a href="{{ url_for('admin_teaching_plan', syllabus_id=syllabus['id']) }}">Kế hoạch giảng dạy</a>
+    </div>
+    {% endif %}
+
+    {% set d = form_data or syllabus %}
+
+    <div class="admin-panel">
+        <form method="post">
+            <!-- Language tabs for bilingual fields -->
+            <div class="lang-tabs" style="margin-bottom:1rem;">
+                <button type="button" class="lang-tab active" data-lang="vi" onclick="switchLang('vi')">Tiếng Việt</button>
+                <button type="button" class="lang-tab" data-lang="en" onclick="switchLang('en')">English</button>
+            </div>
+
+            <h3>Thông tin cơ bản</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="course_code">Mã học phần *</label>
+                    <input type="text" id="course_code" name="course_code" value="{{ d['course_code'] if d else '' }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="training_program">Chương trình đào tạo</label>
+                    <input type="text" id="training_program" name="training_program" value="{{ d['training_program'] if d else '' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group lang-vi">
+                    <label for="course_title_vi">Tên học phần (Tiếng Việt)</label>
+                    <input type="text" id="course_title_vi" name="course_title_vi" value="{{ d['course_title_vi'] if d else '' }}">
+                </div>
+                <div class="form-group lang-en" style="display:none">
+                    <label for="course_title_en">Course Title (English)</label>
+                    <input type="text" id="course_title_en" name="course_title_en" value="{{ d['course_title_en'] if d else '' }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="credits">Số tín chỉ</label>
+                    <input type="number" id="credits" name="credits" value="{{ d['credits'] if d else 0 }}" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="contact_hours">Số tiết trên lớp</label>
+                    <input type="number" id="contact_hours" name="contact_hours" value="{{ d['contact_hours'] if d else 0 }}" min="0">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="self_study_hours">Số tiết tự học</label>
+                    <input type="number" id="self_study_hours" name="self_study_hours" value="{{ d['self_study_hours'] if d else 0 }}" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="num_prerequisite_courses">Số HP tiên quyết</label>
+                    <input type="text" id="num_prerequisite_courses" name="num_prerequisite_courses" value="{{ d['num_prerequisite_courses'] if d else 'None' }}">
+                </div>
+            </div>
+
+            <h3>Thông tin quyết định</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="decision_date">Ngày ra quyết định</label>
+                    <input type="date" id="decision_date" name="decision_date" value="{{ d['decision_date'] if d else '' }}">
+                </div>
+                <div class="form-group">
+                    <label for="decision_number">Số quyết định</label>
+                    <input type="text" id="decision_number" name="decision_number" value="{{ d['decision_number'] if d else '' }}">
+                </div>
+            </div>
+
+            <h3>Học phần tiên quyết</h3>
+            <div class="form-group lang-vi">
+                <label for="prerequisite_courses_vi">HP tiên quyết (Tiếng Việt)</label>
+                <input type="text" id="prerequisite_courses_vi" name="prerequisite_courses_vi" value="{{ d['prerequisite_courses_vi'] if d else '' }}">
+            </div>
+            <div class="form-group lang-en" style="display:none">
+                <label for="prerequisite_courses_en">Prerequisite Courses (English)</label>
+                <input type="text" id="prerequisite_courses_en" name="prerequisite_courses_en" value="{{ d['prerequisite_courses_en'] if d else '' }}">
+            </div>
+
+            <h3>
+                <span class="lang-vi">Mô tả khóa học</span>
+                <span class="lang-en" style="display:none">Course Description</span>
+            </h3>
+            <div class="form-group lang-vi">
+                <label for="description_vi">Mô tả (Tiếng Việt)</label>
+                <textarea id="description_vi" name="description_vi" rows="4">{{ d['description_vi'] if d else '' }}</textarea>
+            </div>
+            <div class="form-group lang-en" style="display:none">
+                <label for="description_en">Description (English)</label>
+                <textarea id="description_en" name="description_en" rows="4">{{ d['description_en'] if d else '' }}</textarea>
+            </div>
+
+            <h3>
+                <span class="lang-vi">Mục 9 — Đánh giá Chuẩn đầu ra</span>
+                <span class="lang-en" style="display:none">Section 9 — CLO Assessment</span>
+            </h3>
+            <div class="form-group lang-vi">
+                <label for="clo_assessment_vi">CLO Assessment (Tiếng Việt)</label>
+                <textarea id="clo_assessment_vi" name="clo_assessment_vi" rows="3">{{ d['clo_assessment_vi'] if d else '' }}</textarea>
+            </div>
+            <div class="form-group lang-en" style="display:none">
+                <label for="clo_assessment_en">CLO Assessment (English)</label>
+                <textarea id="clo_assessment_en" name="clo_assessment_en" rows="3">{{ d['clo_assessment_en'] if d else '' }}</textarea>
+            </div>
+
+            <h3>
+                <span class="lang-vi">Mục 10 — Yêu cầu học phần</span>
+                <span class="lang-en" style="display:none">Section 10 — Course Requirements</span>
+            </h3>
+            <div class="form-group lang-vi">
+                <label for="course_requirements_vi">Yêu cầu (Tiếng Việt)</label>
+                <textarea id="course_requirements_vi" name="course_requirements_vi" rows="3">{{ d['course_requirements_vi'] if d else '' }}</textarea>
+            </div>
+            <div class="form-group lang-en" style="display:none">
+                <label for="course_requirements_en">Requirements (English)</label>
+                <textarea id="course_requirements_en" name="course_requirements_en" rows="3">{{ d['course_requirements_en'] if d else '' }}</textarea>
+            </div>
+
+            <h3>Thời gian điều chỉnh đề cương</h3>
+            <div class="form-group">
+                <label for="adjustment_time">Syllabus Adjustment Time</label>
+                <input type="text" id="adjustment_time" name="adjustment_time" value="{{ d['adjustment_time'] if d else '' }}">
+            </div>
+
+            <div style="display:flex; gap:0.5rem; margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">💾 {{ 'Cập nhật' if syllabus else 'Tạo đề cương' }}</button>
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">← Quay lại</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
